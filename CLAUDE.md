@@ -257,6 +257,16 @@ Testing requirement note: the closed-test rule (12 testers opted in continuously
 Do not ask for the JSON in chat. The owner pastes the entire file contents into the repo secret.
 
 
+### Already set up for this account (2026-11-08): direct API access from Claude sessions
+The one-time account setup above is DONE. Do not ask the owner to redo it.
+- Service account `agefox-play@red-grid-513513-t6.iam.gserviceaccount.com` (Google Cloud project agefox-play, no. 695216301067). The Google Play Android Developer API and the Google Play Developer Reporting API are enabled in that project. The service account has the three permissions above at **account level**, so it covers every current and future app in the "Vplus Studio" developer account. It has no Production, review-reply or financial permissions.
+- In every Claude cloud session the environment variables `GOOGLE_PLAY_CLIENT_EMAIL` and `GOOGLE_PLAY_PRIVATE_KEY` hold its key. They come from the owner's Default environment, and the same notes are in the user memory `~/.claude/CLAUDE.md`. Never print, log or commit them. The stored key has no BEGIN/END lines and starts with a stray `n`: drop the `n`, strip whitespace, wrap at 64 characters and add the PEM header and footer before signing the JWT.
+- Use them from the session for listing, track and vitals work: Android Publisher v3 (scope `https://www.googleapis.com/auth/androidpublisher`) through edits (insert, change, commit), and Play Developer Reporting v1beta1 `GET apps:search` (scope `https://www.googleapis.com/auth/playdeveloperreporting`) to list all apps. For GitHub Actions the repo still needs its own `PLAY_SERVICE_ACCOUNT_JSON` secret (below).
+- Apps on 2026-11-08: `app.vplusstudio.agenow` (AgeFox, repo ben-kama-ani-hayom), `app.vplusstudio.easypen` (EasyPen, repo easypen), `app.vplusstudio.zonmoment` (Zonmoment, repo zonmoment). Refresh the list with `apps:search`.
+- Working tools to copy from `ronmailx-boop/ben-kama-ani-hayom` (private; attach it with add_repo): `store/play_listing.py` (shows the listing diff; `--apply` writes it, `--images` includes the images), `store/play_upload.py` (uploads an AAB to Internal testing), and `android/` with `.github/workflows/android-build.yml` (builds the TWA AAB with Bubblewrap, a lighter option than the Gradle and fastlane flow below for PWAs).
+- Before changing anything in Play, show the owner exactly what will change and wait for his approval.
+
+
 ### GitHub repo secrets (owner adds, per repo)
 - `PLAY_SERVICE_ACCOUNT_JSON`: full JSON key text.
 - `ANDROID_KEYSTORE_BASE64`: upload keystore, base64 (`base64 -w0 upload.jks`; create it with `keytool -genkeypair` on any machine or in a one-off Actions run, and have the owner store it safely; losing it requires a Play "upload key reset"). Keep a private backup of the keystore outside GitHub.
